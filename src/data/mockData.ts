@@ -1,0 +1,173 @@
+
+import { User, Book, BorrowedBook } from "@/types";
+
+export const users: User[] = [
+  {
+    id: "1",
+    username: "student1",
+    email: "student1@example.com",
+    password: "password123", // Would be hashed in real application
+    role: "student",
+    name: "John Smith"
+  },
+  {
+    id: "2",
+    username: "admin1",
+    email: "admin1@example.com",
+    password: "admin123", // Would be hashed in real application
+    role: "admin",
+    name: "Sarah Johnson"
+  },
+  {
+    id: "3",
+    username: "student2",
+    email: "student2@example.com",
+    password: "password123", // Would be hashed in real application
+    role: "student",
+    name: "Emily Davis"
+  },
+];
+
+export const books: Book[] = [
+  {
+    id: "1",
+    title: "Harry Potter and the Philosopher's Stone",
+    author: "J.K. Rowling",
+    publisher: "Bloomsbury",
+    isbn: "978-0-7475-3269-9",
+    coverImage: "/placeholder.svg",
+    available: true,
+  },
+  {
+    id: "2",
+    title: "The Origin of Species",
+    author: "Charles Darwin",
+    publisher: "John Murray",
+    isbn: "978-0-6848-3728-0",
+    coverImage: "/placeholder.svg",
+    available: true,
+  },
+  {
+    id: "3",
+    title: "Last Words",
+    author: "George Carlin",
+    publisher: "Free Press",
+    isbn: "978-1-4391-7295-7",
+    coverImage: "/placeholder.svg",
+    available: false,
+  },
+  {
+    id: "4",
+    title: "The Bright Edge of the World",
+    author: "Eowyn Ivey",
+    publisher: "Little, Brown and Company",
+    isbn: "978-0-316-24285-1",
+    coverImage: "/placeholder.svg",
+    available: true,
+  },
+  {
+    id: "5",
+    title: "The Shining",
+    author: "Stephen King",
+    publisher: "Doubleday",
+    isbn: "978-0-385-12167-5",
+    coverImage: "/placeholder.svg",
+    available: true,
+  },
+  {
+    id: "6",
+    title: "It",
+    author: "Stephen King",
+    publisher: "Viking",
+    isbn: "978-0-670-81302-5",
+    coverImage: "/placeholder.svg",
+    available: false,
+  },
+  {
+    id: "7",
+    title: "The Stand",
+    author: "Stephen King",
+    publisher: "Doubleday",
+    isbn: "978-0-385-12168-2",
+    coverImage: "/placeholder.svg",
+    available: true,
+  },
+  {
+    id: "8",
+    title: "Pet Sematary",
+    author: "Stephen King",
+    publisher: "Doubleday",
+    isbn: "978-0-385-12874-2",
+    coverImage: "/placeholder.svg",
+    available: true,
+  },
+  {
+    id: "9",
+    title: "Carrie",
+    author: "Stephen King",
+    publisher: "Doubleday",
+    isbn: "978-0-385-08695-0",
+    coverImage: "/placeholder.svg",
+    available: false,
+  },
+  {
+    id: "10",
+    title: "Misery",
+    author: "Stephen King",
+    publisher: "Viking",
+    isbn: "978-0-670-81364-3",
+    coverImage: "/placeholder.svg",
+    available: true,
+  },
+  {
+    id: "11",
+    title: "The Green Mile",
+    author: "Stephen King",
+    publisher: "Signet Books",
+    isbn: "978-0-451-19336-4",
+    coverImage: "/placeholder.svg",
+    available: true,
+  },
+  {
+    id: "12",
+    title: "11/22/63",
+    author: "Stephen King",
+    publisher: "Scribner",
+    isbn: "978-1-4516-2728-2",
+    coverImage: "/placeholder.svg",
+    available: true,
+  },
+];
+
+export const borrowedBooks: BorrowedBook[] = [
+  {
+    id: "1",
+    studentName: "John Smith",
+    studentEmail: "student1@example.com",
+    bookTitle: "Last Words",
+    bookId: "3",
+    borrowedDate: "01/05/2025",
+    dueDate: "15/05/2025",
+    status: "active",
+  },
+  {
+    id: "2",
+    studentName: "Emily Davis",
+    studentEmail: "student2@example.com",
+    bookTitle: "It",
+    bookId: "6",
+    borrowedDate: "28/04/2025",
+    dueDate: "12/05/2025",
+    status: "active",
+  },
+  {
+    id: "3",
+    studentName: "Emily Davis",
+    studentEmail: "student2@example.com",
+    bookTitle: "Carrie",
+    bookId: "9",
+    borrowedDate: "15/04/2025",
+    dueDate: "29/04/2025",
+    status: "active",
+  },
+];

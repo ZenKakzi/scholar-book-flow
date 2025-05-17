@@ -1,8 +1,9 @@
-import * as React from "react"
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 
-import { cn } from "@/lib/utils"
-import { ButtonProps, buttonVariants } from "@/components/ui/button"
+import * as React from "react";
+import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
   <nav
@@ -11,8 +12,8 @@ const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
     className={cn("mx-auto flex w-full justify-center", className)}
     {...props}
   />
-)
-Pagination.displayName = "Pagination"
+);
+Pagination.displayName = "Pagination";
 
 const PaginationContent = React.forwardRef<
   HTMLUListElement,
@@ -23,41 +24,43 @@ const PaginationContent = React.forwardRef<
     className={cn("flex flex-row items-center gap-1", className)}
     {...props}
   />
-))
-PaginationContent.displayName = "PaginationContent"
+));
+PaginationContent.displayName = "PaginationContent";
 
 const PaginationItem = React.forwardRef<
   HTMLLIElement,
   React.ComponentProps<"li">
 >(({ className, ...props }, ref) => (
   <li ref={ref} className={cn("", className)} {...props} />
-))
-PaginationItem.displayName = "PaginationItem"
+));
+PaginationItem.displayName = "PaginationItem";
 
 type PaginationLinkProps = {
-  isActive?: boolean
-} & Pick<ButtonProps, "size"> &
-  React.ComponentProps<"a">
+  isActive?: boolean;
+} & Pick<
+  React.AnchorHTMLAttributes<HTMLAnchorElement>,
+  "className" | "href" | "onClick"
+> & {
+  children: React.ReactNode;
+};
 
 const PaginationLink = ({
   className,
   isActive,
-  size = "icon",
+  children,
   ...props
 }: PaginationLinkProps) => (
-  <a
+  <Button
     aria-current={isActive ? "page" : undefined}
-    className={cn(
-      buttonVariants({
-        variant: isActive ? "outline" : "ghost",
-        size,
-      }),
-      className
-    )}
+    variant={isActive ? "default" : "outline"}
+    size="icon"
+    className={cn(className)}
     {...props}
-  />
-)
-PaginationLink.displayName = "PaginationLink"
+  >
+    {children}
+  </Button>
+);
+PaginationLink.displayName = "PaginationLink";
 
 const PaginationPrevious = ({
   className,
@@ -72,8 +75,8 @@ const PaginationPrevious = ({
     <ChevronLeft className="h-4 w-4" />
     <span>Previous</span>
   </PaginationLink>
-)
-PaginationPrevious.displayName = "PaginationPrevious"
+);
+PaginationPrevious.displayName = "PaginationPrevious";
 
 const PaginationNext = ({
   className,
@@ -88,8 +91,8 @@ const PaginationNext = ({
     <span>Next</span>
     <ChevronRight className="h-4 w-4" />
   </PaginationLink>
-)
-PaginationNext.displayName = "PaginationNext"
+);
+PaginationNext.displayName = "PaginationNext";
 
 const PaginationEllipsis = ({
   className,
@@ -103,8 +106,65 @@ const PaginationEllipsis = ({
     <MoreHorizontal className="h-4 w-4" />
     <span className="sr-only">More pages</span>
   </span>
-)
-PaginationEllipsis.displayName = "PaginationEllipsis"
+);
+PaginationEllipsis.displayName = "PaginationEllipsis";
+
+// Custom page component
+const PaginationPage = ({
+  children,
+  isActive,
+  onClick,
+}: {
+  children: React.ReactNode;
+  isActive?: boolean;
+  onClick?: () => void;
+}) => (
+  <PaginationItem>
+    <PaginationLink isActive={isActive} onClick={onClick}>
+      {children}
+    </PaginationLink>
+  </PaginationItem>
+);
+
+// Custom previous page component
+const PaginationPrevPage = ({
+  onClick,
+  disabled,
+}: {
+  onClick: () => void;
+  disabled?: boolean;
+}) => (
+  <PaginationItem>
+    <Button
+      variant="outline"
+      onClick={onClick}
+      disabled={disabled}
+      size="icon"
+    >
+      <ChevronLeft className="h-4 w-4" />
+    </Button>
+  </PaginationItem>
+);
+
+// Custom next page component
+const PaginationNextPage = ({
+  onClick,
+  disabled,
+}: {
+  onClick: () => void;
+  disabled?: boolean;
+}) => (
+  <PaginationItem>
+    <Button
+      variant="outline"
+      onClick={onClick}
+      disabled={disabled}
+      size="icon"
+    >
+      <ChevronRight className="h-4 w-4" />
+    </Button>
+  </PaginationItem>
+);
 
 export {
   Pagination,
@@ -113,5 +173,8 @@ export {
   PaginationItem,
   PaginationLink,
   PaginationNext,
+  PaginationPage,
   PaginationPrevious,
-}
+  PaginationPrevPage,
+  PaginationNextPage,
+};

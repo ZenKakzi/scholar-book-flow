@@ -1,0 +1,86 @@
+
+import React, { useState } from "react";
+import Sidebar from "@/components/Sidebar";
+import { books } from "@/data/mockData";
+import BookCard from "@/components/BookCard";
+import SearchBox from "@/components/SearchBox";
+import Footer from "@/components/Footer";
+import { Pagination } from "@/components/ui/pagination";
+import FloatingBooks from "@/components/FloatingBooks";
+
+const StudentBooks: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const filteredBooks = books.filter(
+    (book) => book.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+              book.author.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentBooks = filteredBooks.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredBooks.length / itemsPerPage);
+
+  return (
+    <div className="flex min-h-screen bg-library-background">
+      <FloatingBooks />
+      <Sidebar userType="student" />
+      
+      <div className="flex-1 flex flex-col">
+        <main className="flex-1 p-6">
+          <div className="max-w-6xl mx-auto">
+            <header className="mb-8">
+              <h1 className="text-3xl font-bold text-white">All Books</h1>
+              <p className="text-gray-400">Browse and search all books in our library</p>
+            </header>
+            
+            <div className="mb-6">
+              <SearchBox onSearch={setSearchQuery} placeholder="Search by title or author..." />
+            </div>
+            
+            {currentBooks.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6">
+                {currentBooks.map((book) => (
+                  <BookCard key={book.id} book={book} isStudent={true} />
+                ))}
+              </div>
+            ) : (
+              <div className="bg-library-panel p-6 rounded-xl text-center">
+                <p className="text-gray-400">No books found matching your search.</p>
+              </div>
+            )}
+            
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-8">
+                <Pagination>
+                  <Pagination.PrevPage
+                    onClick={() => setCurrentPage(curr => Math.max(curr - 1, 1))}
+                    disabled={currentPage === 1}
+                  />
+                  {Array.from({ length: totalPages }).map((_, index) => (
+                    <Pagination.Page
+                      key={index}
+                      onClick={() => setCurrentPage(index + 1)}
+                      isActive={currentPage === index + 1}
+                    >
+                      {index + 1}
+                    </Pagination.Page>
+                  ))}
+                  <Pagination.NextPage
+                    onClick={() => setCurrentPage(curr => Math.min(curr + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                  />
+                </Pagination>
+              </div>
+            )}
+          </div>
+        </main>
+        <Footer />
+      </div>
+    </div>
+  );
+};
+
+export default StudentBooks;
