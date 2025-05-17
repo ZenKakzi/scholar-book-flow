@@ -1,7 +1,5 @@
-
 import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
-import { borrowedBooks as allBorrowedBooks } from "@/data/mockData";
 import SearchBox from "@/components/SearchBox";
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil, Trash2 } from "lucide-react";
@@ -28,8 +26,10 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import FloatingBooks from "@/components/FloatingBooks";
 import { BorrowedBook } from "@/types";
+import { useBooks } from "@/contexts/BookContext";
 
 const AdminBorrowed: React.FC = () => {
+  const { borrowedBooks } = useBooks();
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -50,7 +50,7 @@ const AdminBorrowed: React.FC = () => {
   });
   
   // Filter borrowed books based on search
-  const filteredBorrowings = allBorrowedBooks.filter(
+  const filteredBorrowings = borrowedBooks.filter(
     (borrowed) => 
       borrowed.studentName.toLowerCase().includes(searchQuery.toLowerCase()) || 
       borrowed.bookTitle.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -115,9 +115,9 @@ const AdminBorrowed: React.FC = () => {
       <FloatingBooks />
       <Sidebar userType="admin" />
       
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col ml-64">
         <main className="flex-1 p-6">
-          <div className="max-w-6xl mx-auto">
+          <div className="">
             <header className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h1 className="text-3xl font-bold text-white">Borrowed Books Management</h1>
@@ -258,27 +258,25 @@ const AdminBorrowed: React.FC = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="studentName">Student Name</Label>
-                <Input
-                  id="studentName"
-                  value={newBorrowing.studentName}
-                  onChange={(e) => setNewBorrowing({ ...newBorrowing, studentName: e.target.value })}
-                  className="bg-gray-800 border-gray-700"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="studentEmail">Student Email</Label>
-                <Input
-                  id="studentEmail"
-                  value={newBorrowing.studentEmail}
-                  onChange={(e) => setNewBorrowing({ ...newBorrowing, studentEmail: e.target.value })}
-                  className="bg-gray-800 border-gray-700"
-                />
-              </div>
+            <div className="grid grid-cols-1 gap-2">
+              <Label htmlFor="studentName">Student Name</Label>
+              <Input
+                id="studentName"
+                value={newBorrowing.studentName}
+                onChange={(e) => setNewBorrowing({ ...newBorrowing, studentName: e.target.value })}
+                className="bg-gray-800 border-gray-700"
+              />
             </div>
-            <div className="grid gap-2">
+            <div className="grid grid-cols-1 gap-2">
+              <Label htmlFor="studentEmail">Student Email</Label>
+              <Input
+                id="studentEmail"
+                value={newBorrowing.studentEmail}
+                onChange={(e) => setNewBorrowing({ ...newBorrowing, studentEmail: e.target.value })}
+                className="bg-gray-800 border-gray-700"
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-2">
               <Label htmlFor="bookTitle">Book Title</Label>
               <Input
                 id="bookTitle"
@@ -287,55 +285,37 @@ const AdminBorrowed: React.FC = () => {
                 className="bg-gray-800 border-gray-700"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="borrowedDate">Borrowed Date (DD/MM/YYYY)</Label>
-                <Input
-                  id="borrowedDate"
-                  value={newBorrowing.borrowedDate}
-                  onChange={(e) => setNewBorrowing({ ...newBorrowing, borrowedDate: e.target.value })}
-                  className="bg-gray-800 border-gray-700"
-                  placeholder="01/05/2025"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="dueDate">Due Date (DD/MM/YYYY)</Label>
-                <Input
-                  id="dueDate"
-                  value={newBorrowing.dueDate}
-                  onChange={(e) => setNewBorrowing({ ...newBorrowing, dueDate: e.target.value })}
-                  className="bg-gray-800 border-gray-700"
-                  placeholder="15/05/2025"
-                />
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Label htmlFor="status" className="text-gray-300">Status</Label>
-              <Switch
-                id="status"
-                checked={newBorrowing.status === "active"}
-                onCheckedChange={(checked) =>
-                  setNewBorrowing({ ...newBorrowing, status: checked ? "active" : "returned" })
-                }
+            <div className="grid grid-cols-1 gap-2">
+              <Label htmlFor="bookId">Book ID</Label>
+              <Input
+                id="bookId"
+                value={newBorrowing.bookId}
+                onChange={(e) => setNewBorrowing({ ...newBorrowing, bookId: e.target.value })}
+                className="bg-gray-800 border-gray-700"
               />
-              <span className="text-sm text-gray-400">
-                {newBorrowing.status === "active" ? "Active" : "Returned"}
-              </span>
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              <Label htmlFor="borrowedDate">Borrowed Date</Label>
+              <Input
+                id="borrowedDate"
+                value={newBorrowing.borrowedDate}
+                onChange={(e) => setNewBorrowing({ ...newBorrowing, borrowedDate: e.target.value })}
+                className="bg-gray-800 border-gray-700"
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              <Label htmlFor="dueDate">Due Date</Label>
+              <Input
+                id="dueDate"
+                value={newBorrowing.dueDate}
+                onChange={(e) => setNewBorrowing({ ...newBorrowing, dueDate: e.target.value })}
+                className="bg-gray-800 border-gray-700"
+              />
             </div>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsAddDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button 
-              className="bg-library-accent hover:bg-orange-600"
-              onClick={handleSaveBorrowing}
-            >
-              Save Record
-            </Button>
+            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Cancel</Button>
+            <Button className="bg-library-accent hover:bg-orange-600" onClick={handleSaveBorrowing}>Add Borrowing</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -344,33 +324,31 @@ const AdminBorrowed: React.FC = () => {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="bg-library-panel text-white border-gray-700">
           <DialogHeader>
-            <DialogTitle>Edit Borrowing Record</DialogTitle>
+            <DialogTitle>Edit Borrowing</DialogTitle>
             <DialogDescription className="text-gray-400">
-              Update the borrowing record details.
+              Edit the details of the borrowing record.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="edit-studentName">Student Name</Label>
-                <Input
-                  id="edit-studentName"
-                  value={newBorrowing.studentName}
-                  onChange={(e) => setNewBorrowing({ ...newBorrowing, studentName: e.target.value })}
-                  className="bg-gray-800 border-gray-700"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="edit-studentEmail">Student Email</Label>
-                <Input
-                  id="edit-studentEmail"
-                  value={newBorrowing.studentEmail}
-                  onChange={(e) => setNewBorrowing({ ...newBorrowing, studentEmail: e.target.value })}
-                  className="bg-gray-800 border-gray-700"
-                />
-              </div>
+            <div className="grid grid-cols-1 gap-2">
+              <Label htmlFor="edit-studentName">Student Name</Label>
+              <Input
+                id="edit-studentName"
+                value={newBorrowing.studentName}
+                onChange={(e) => setNewBorrowing({ ...newBorrowing, studentName: e.target.value })}
+                className="bg-gray-800 border-gray-700"
+              />
             </div>
-            <div className="grid gap-2">
+            <div className="grid grid-cols-1 gap-2">
+              <Label htmlFor="edit-studentEmail">Student Email</Label>
+              <Input
+                id="edit-studentEmail"
+                value={newBorrowing.studentEmail}
+                onChange={(e) => setNewBorrowing({ ...newBorrowing, studentEmail: e.target.value })}
+                className="bg-gray-800 border-gray-700"
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-2">
               <Label htmlFor="edit-bookTitle">Book Title</Label>
               <Input
                 id="edit-bookTitle"
@@ -379,79 +357,53 @@ const AdminBorrowed: React.FC = () => {
                 className="bg-gray-800 border-gray-700"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="edit-borrowedDate">Borrowed Date (DD/MM/YYYY)</Label>
-                <Input
-                  id="edit-borrowedDate"
-                  value={newBorrowing.borrowedDate}
-                  onChange={(e) => setNewBorrowing({ ...newBorrowing, borrowedDate: e.target.value })}
-                  className="bg-gray-800 border-gray-700"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="edit-dueDate">Due Date (DD/MM/YYYY)</Label>
-                <Input
-                  id="edit-dueDate"
-                  value={newBorrowing.dueDate}
-                  onChange={(e) => setNewBorrowing({ ...newBorrowing, dueDate: e.target.value })}
-                  className="bg-gray-800 border-gray-700"
-                />
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Label htmlFor="edit-status" className="text-gray-300">Status</Label>
-              <Switch
-                id="edit-status"
-                checked={newBorrowing.status === "active"}
-                onCheckedChange={(checked) =>
-                  setNewBorrowing({ ...newBorrowing, status: checked ? "active" : "returned" })
-                }
+            <div className="grid grid-cols-1 gap-2">
+              <Label htmlFor="edit-bookId">Book ID</Label>
+              <Input
+                id="edit-bookId"
+                value={newBorrowing.bookId}
+                onChange={(e) => setNewBorrowing({ ...newBorrowing, bookId: e.target.value })}
+                className="bg-gray-800 border-gray-700"
               />
-              <span className="text-sm text-gray-400">
-                {newBorrowing.status === "active" ? "Active" : "Returned"}
-              </span>
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              <Label htmlFor="edit-borrowedDate">Borrowed Date</Label>
+              <Input
+                id="edit-borrowedDate"
+                value={newBorrowing.borrowedDate}
+                onChange={(e) => setNewBorrowing({ ...newBorrowing, borrowedDate: e.target.value })}
+                className="bg-gray-800 border-gray-700"
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              <Label htmlFor="edit-dueDate">Due Date</Label>
+              <Input
+                id="edit-dueDate"
+                value={newBorrowing.dueDate}
+                onChange={(e) => setNewBorrowing({ ...newBorrowing, dueDate: e.target.value })}
+                className="bg-gray-800 border-gray-700"
+              />
             </div>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsEditDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button 
-              className="bg-blue-500 hover:bg-blue-600"
-              onClick={handleSaveBorrowing}
-            >
-              Update Record
-            </Button>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
+            <Button className="bg-library-accent hover:bg-orange-600" onClick={handleSaveBorrowing}>Save Changes</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
-      {/* Delete Borrowing Confirmation Dialog */}
+
+      {/* Delete Borrowing Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="bg-library-panel text-white border-gray-700">
           <DialogHeader>
-            <DialogTitle>Delete Borrowing Record</DialogTitle>
+            <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription className="text-gray-400">
-              Are you sure you want to delete this borrowing record? This action cannot be undone.
+              Are you sure you want to delete the borrowing record for "{selectedBorrowing?.bookTitle}"? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button 
-              variant="destructive"
-              onClick={handleDeleteConfirm}
-            >
-              Delete
-            </Button>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
+            <Button className="bg-red-600 hover:bg-red-700" onClick={handleDeleteConfirm}>Delete</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

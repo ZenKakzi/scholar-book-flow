@@ -1,10 +1,9 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
-import { books } from "@/data/mockData";
 import BookCard from "@/components/BookCard";
 import SearchBox from "@/components/SearchBox";
 import Footer from "@/components/Footer";
+import { useBooks } from "@/contexts/BookContext";
 import {
   Pagination,
   PaginationContent,
@@ -16,9 +15,15 @@ import {
 import FloatingBooks from "@/components/FloatingBooks";
 
 const StudentBooks: React.FC = () => {
+  const { books, borrowedBooks } = useBooks();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  // Effect to log borrowedBooks state changes - for debugging
+  useEffect(() => {
+    console.log("Borrowed Books state updated in Books section:", borrowedBooks);
+  }, [borrowedBooks]);
 
   const filteredBooks = books.filter(
     (book) => book.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -35,9 +40,9 @@ const StudentBooks: React.FC = () => {
       <FloatingBooks />
       <Sidebar userType="student" />
       
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col ml-64">
         <main className="flex-1 p-6">
-          <div className="max-w-6xl mx-auto">
+          <div className="">
             <header className="mb-8">
               <h1 className="text-3xl font-bold text-white">All Books</h1>
               <p className="text-gray-400">Browse and search all books in our library</p>
@@ -50,7 +55,11 @@ const StudentBooks: React.FC = () => {
             {currentBooks.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6">
                 {currentBooks.map((book) => (
-                  <BookCard key={book.id} book={book} isStudent={true} />
+                   <BookCard 
+                     key={book.id + '-' + book.available}
+                     book={book} 
+                     isStudent={true} 
+                   />
                 ))}
               </div>
             ) : (

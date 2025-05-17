@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import { books, borrowedBooks, users } from "@/data/mockData";
@@ -56,9 +55,9 @@ const AdminSearch: React.FC = () => {
       <FloatingBooks />
       <Sidebar userType="admin" />
       
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col ml-64">
         <main className="flex-1 p-6">
-          <div className="max-w-6xl mx-auto">
+          <div className="">
             <header className="mb-8">
               <h1 className="text-3xl font-bold text-white">Search</h1>
               <p className="text-gray-400">Search for books, borrowings, or students</p>

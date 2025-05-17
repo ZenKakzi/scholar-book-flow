@@ -1,12 +1,10 @@
-
 import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
-import { borrowedBooks } from "@/data/mockData";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBooks } from "@/contexts/BookContext";
 import SearchBox from "@/components/SearchBox";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -27,6 +25,7 @@ import FloatingBooks from "@/components/FloatingBooks";
 
 const StudentBorrowed: React.FC = () => {
   const { user } = useAuth();
+  const { borrowedBooks, returnBook } = useBooks();
   const [searchQuery, setSearchQuery] = useState("");
   const [returningBookId, setReturningBookId] = useState<string | null>(null);
   
@@ -44,9 +43,10 @@ const StudentBorrowed: React.FC = () => {
   };
   
   const confirmReturn = () => {
-    // In a real app, this would be an API call
-    toast.success("Book returned successfully!");
-    setReturningBookId(null);
+    if (returningBookId) {
+      returnBook(returningBookId);
+      setReturningBookId(null);
+    }
   };
   
   return (

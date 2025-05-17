@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "@/components/Sidebar";
@@ -74,7 +73,7 @@ const AdminBookDetails: React.FC = () => {
       <FloatingBooks />
       <Sidebar userType="admin" />
       
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col ml-64">
         <main className="flex-1 p-6">
           <div className="max-w-4xl mx-auto">
             <Button

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "@/types";
 import { users } from "@/data/mockData";
@@ -57,9 +56,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
+    // Clear user state
     setUser(null);
+    
+    // Clear all user-related data from localStorage
     localStorage.removeItem("libraryUser");
-    toast.info("Logged out successfully");
+    localStorage.removeItem("libraryBooks");
+    localStorage.removeItem("libraryBorrowedBooks");
+    
+    // Show success message
+    toast.success("Logged out successfully");
+    
+    // Redirect to home page
     navigate("/");
   };
 

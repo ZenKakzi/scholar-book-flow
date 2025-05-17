@@ -1,10 +1,9 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book as BookIcon, Clock } from "lucide-react";
-import { books, borrowedBooks } from "@/data/mockData";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBooks } from "@/contexts/BookContext";
 import BookCard from "@/components/BookCard";
 import SearchBox from "@/components/SearchBox";
 import FloatingBooks from "@/components/FloatingBooks";
@@ -12,8 +11,14 @@ import Footer from "@/components/Footer";
 
 const StudentDashboard: React.FC = () => {
   const { user } = useAuth();
+  const { books, borrowedBooks } = useBooks();
   const [searchQuery, setSearchQuery] = useState("");
   
+  // Effect to log borrowedBooks state changes - for debugging
+  useEffect(() => {
+    console.log("Borrowed Books state updated in Dashboard:", borrowedBooks);
+  }, [borrowedBooks]);
+
   const myBorrowedBooks = borrowedBooks.filter(
     (borrowed) => borrowed.studentEmail === user?.email && borrowed.status === "active"
   );
@@ -22,14 +27,21 @@ const StudentDashboard: React.FC = () => {
     (book) => book.available && book.title.toLowerCase().includes(searchQuery.toLowerCase())
   ).slice(0, 6);
   
+  // Effect to log books state changes - for debugging
+  useEffect(() => {
+    console.log("Books state updated in Dashboard:", books.length, "total books");
+    const availableCount = books.filter(book => book.available).length;
+    console.log("Available books count:", availableCount);
+  }, [books]); 
+
   return (
     <div className="flex min-h-screen bg-library-background">
       <FloatingBooks />
       <Sidebar userType="student" />
       
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 ml-64">
         <main className="flex-1 p-6">
-          <div className="max-w-6xl mx-auto">
+          <div className="">
             <header className="mb-8">
               <h1 className="text-3xl font-bold text-white">
                 Welcome, {user?.name || "Student"}
@@ -67,7 +79,7 @@ const StudentDashboard: React.FC = () => {
               </Card>
             </div>
             
-            <div className="mb-8">
+            <div className="mb-8" key={myBorrowedBooks.length}>
               <h2 className="text-2xl font-bold text-white mb-4">Available Books</h2>
               <div className="mb-4">
                 <SearchBox 

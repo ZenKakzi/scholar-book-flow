@@ -1,9 +1,8 @@
-
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "@/components/Sidebar";
-import { books, borrowedBooks } from "@/data/mockData";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBooks } from "@/contexts/BookContext";
 import BookDetailsCard from "@/components/BookDetailsCard";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -21,6 +20,7 @@ import FloatingBooks from "@/components/FloatingBooks";
 const StudentBookDetails: React.FC = () => {
   const { bookId } = useParams<{ bookId: string }>();
   const { user } = useAuth();
+  const { books, borrowBook } = useBooks();
   const navigate = useNavigate();
   const [showBorrowDialog, setShowBorrowDialog] = useState(false);
   
@@ -43,14 +43,18 @@ const StudentBookDetails: React.FC = () => {
   }
   
   const handleBorrowRequest = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
     setShowBorrowDialog(true);
   };
   
   const confirmBorrow = () => {
-    // In a real app, this would be an API call
-    toast.success("Book borrowed successfully!");
-    setShowBorrowDialog(false);
-    navigate("/student/borrowed");
+    if (user && book) {
+      borrowBook(book.id, user.email, user.name);
+      setShowBorrowDialog(false);
+    }
   };
   
   return (
@@ -58,9 +62,9 @@ const StudentBookDetails: React.FC = () => {
       <FloatingBooks />
       <Sidebar userType="student" />
       
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col ml-64">
         <main className="flex-1 p-6">
-          <div className="max-w-4xl mx-auto">
+          <div className="">
             <Button
               variant="outline"
               onClick={() => navigate(-1)}

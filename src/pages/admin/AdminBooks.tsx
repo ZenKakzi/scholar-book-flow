@@ -1,7 +1,5 @@
-
 import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
-import { books as allBooks } from "@/data/mockData";
 import SearchBox from "@/components/SearchBox";
 import { Button } from "@/components/ui/button";
 import { Plus, Pencil, Trash2 } from "lucide-react";
@@ -28,8 +26,10 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import FloatingBooks from "@/components/FloatingBooks";
 import { Book } from "@/types";
+import { useBooks } from "@/contexts/BookContext";
 
 const AdminBooks: React.FC = () => {
+  const { books, borrowedBooks, deleteBook, addBook, updateBook } = useBooks();
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -38,18 +38,25 @@ const AdminBooks: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   
-  // New book form state
-  const [newBook, setNewBook] = useState<Partial<Book>>({
+  // New/Edit book form state
+  const [bookFormData, setBookFormData] = useState<Partial<Book & { adminUnavailable?: boolean }>>({
     title: "",
     author: "",
     publisher: "",
     isbn: "",
-    available: true,
+    // Default available to true and adminUnavailable to false for new books
+    available: true, 
+    adminUnavailable: false, 
     coverImage: "/placeholder.svg"
   });
   
+  // Determine if a book is currently borrowed
+  const isBookBorrowed = (bookId: string) => {
+    return borrowedBooks.some(borrowed => borrowed.bookId === bookId && borrowed.status === 'active');
+  };
+
   // Filter books based on search
-  const filteredBooks = allBooks.filter(
+  const filteredBooks = books.filter(
     (book) => 
       book.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
       book.author.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -64,20 +71,23 @@ const AdminBooks: React.FC = () => {
   
   // Handle opening dialogs
   const handleAddBook = () => {
-    setNewBook({
+    setBookFormData({
       title: "",
       author: "",
       publisher: "",
       isbn: "",
       available: true,
+      adminUnavailable: false,
       coverImage: "/placeholder.svg"
     });
+    setSelectedBook(null); // Clear selected book for add
     setIsAddDialogOpen(true);
   };
   
   const handleEditBook = (book: Book) => {
     setSelectedBook(book);
-    setNewBook(book);
+    // Initialize form data based on the book's actual properties
+    setBookFormData({ ...book, adminUnavailable: book.adminUnavailable ?? false });
     setIsEditDialogOpen(true);
   };
   
@@ -88,26 +98,51 @@ const AdminBooks: React.FC = () => {
   
   // Handle form submission
   const handleSaveBook = () => {
-    // For a real app, this would be an API call
-    toast.success(`Book ${isEditDialogOpen ? 'updated' : 'added'} successfully!`);
+    if (isEditDialogOpen && selectedBook) {
+      // When editing, update the book including the adminUnavailable flag
+      // Note: The derived 'available' status is controlled by adminUnavailable and borrowed status
+      updateBook({ ...selectedBook, ...bookFormData });
+    } else if (bookFormData.title && bookFormData.author) { // Basic validation
+      // When adding, ensure adminUnavailable defaults to false
+      addBook({ ...bookFormData, adminUnavailable: bookFormData.adminUnavailable ?? false } as Omit<Book, 'id'> & { adminUnavailable: boolean });
+    }
     setIsAddDialogOpen(false);
     setIsEditDialogOpen(false);
   };
   
   const handleDeleteConfirm = () => {
-    // For a real app, this would be an API call
-    toast.success("Book deleted successfully!");
+    if (selectedBook) {
+      deleteBook(selectedBook.id);
+    }
     setIsDeleteDialogOpen(false);
   };
+
+  // Update bookFormData when selectedBook changes (for editing)
+  React.useEffect(() => {
+    if (selectedBook) {
+       setBookFormData({ ...selectedBook, adminUnavailable: selectedBook.adminUnavailable ?? false });
+    } else {
+       // Reset for adding new book
+       setBookFormData({
+          title: "",
+          author: "",
+          publisher: "",
+          isbn: "",
+          available: true,
+          adminUnavailable: false,
+          coverImage: "/placeholder.svg"
+       });
+    }
+  }, [selectedBook]);
   
   return (
     <div className="flex min-h-screen bg-library-background">
       <FloatingBooks />
       <Sidebar userType="admin" />
       
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col ml-64">
         <main className="flex-1 p-6">
-          <div className="max-w-6xl mx-auto">
+          <div className="">
             <header className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h1 className="text-3xl font-bold text-white">Books Management</h1>
@@ -150,12 +185,13 @@ const AdminBooks: React.FC = () => {
                         <TableCell>
                           <span
                             className={`px-2 py-1 text-xs rounded-full ${
-                              book.available
+                              book.available // Use derived available status for display
                                 ? "bg-green-800 text-green-200"
                                 : "bg-red-800 text-red-200"
                             }`}
                           >
-                            {book.available ? "Available" : "Borrowed"}
+                            {/* Display status based on derived availability and adminUnavailable */}
+                            {book.available ? "Available" : book.adminUnavailable ? "Unavailable (Admin)" : "Borrowed"}
                           </span>
                         </TableCell>
                         <TableCell>
@@ -250,65 +286,51 @@ const AdminBooks: React.FC = () => {
               <Label htmlFor="title">Book Title</Label>
               <Input
                 id="title"
-                value={newBook.title}
-                onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
+                value={bookFormData.title}
+                onChange={(e) => setBookFormData({ ...bookFormData, title: e.target.value })}
                 className="bg-gray-800 border-gray-700"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="author">Author</Label>
-                <Input
-                  id="author"
-                  value={newBook.author}
-                  onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
-                  className="bg-gray-800 border-gray-700"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="publisher">Publisher</Label>
-                <Input
-                  id="publisher"
-                  value={newBook.publisher}
-                  onChange={(e) => setNewBook({ ...newBook, publisher: e.target.value })}
-                  className="bg-gray-800 border-gray-700"
-                />
-              </div>
+            <div className="grid grid-cols-1 gap-2">
+              <Label htmlFor="author">Author</Label>
+              <Input
+                id="author"
+                value={bookFormData.author}
+                onChange={(e) => setBookFormData({ ...bookFormData, author: e.target.value })}
+                className="bg-gray-800 border-gray-700"
+              />
             </div>
-            <div className="grid gap-2">
+            <div className="grid grid-cols-1 gap-2">
+              <Label htmlFor="publisher">Publisher</Label>
+              <Input
+                id="publisher"
+                value={bookFormData.publisher}
+                onChange={(e) => setBookFormData({ ...bookFormData, publisher: e.target.value })}
+                className="bg-gray-800 border-gray-700"
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-2">
               <Label htmlFor="isbn">ISBN</Label>
               <Input
                 id="isbn"
-                value={newBook.isbn}
-                onChange={(e) => setNewBook({ ...newBook, isbn: e.target.value })}
+                value={bookFormData.isbn}
+                onChange={(e) => setBookFormData({ ...bookFormData, isbn: e.target.value })}
                 className="bg-gray-800 border-gray-700"
               />
             </div>
-            <div className="flex items-center gap-4">
-              <Label htmlFor="available" className="text-gray-300">Availability</Label>
+            {/* Admin Unavailable switch for new books */}
+            <div className="flex items-center space-x-2">
               <Switch
-                id="available"
-                checked={newBook.available}
-                onCheckedChange={(checked) => setNewBook({ ...newBook, available: checked })}
+                id="admin-unavailable-new"
+                checked={!bookFormData.adminUnavailable}
+                onCheckedChange={(checked) => setBookFormData({ ...bookFormData, adminUnavailable: !checked })}
               />
-              <span className="text-sm text-gray-400">
-                {newBook.available ? "Available" : "Not Available"}
-              </span>
+              <Label htmlFor="admin-unavailable-new">Available</Label>
             </div>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsAddDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button 
-              className="bg-library-accent hover:bg-orange-600"
-              onClick={handleSaveBook}
-            >
-              Save Book
-            </Button>
+            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Cancel</Button>
+            <Button className="bg-library-accent hover:bg-orange-600" onClick={handleSaveBook}>Add Book</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -319,7 +341,7 @@ const AdminBooks: React.FC = () => {
           <DialogHeader>
             <DialogTitle>Edit Book</DialogTitle>
             <DialogDescription className="text-gray-400">
-              Update the book details.
+              Edit the details of the book.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -327,91 +349,71 @@ const AdminBooks: React.FC = () => {
               <Label htmlFor="edit-title">Book Title</Label>
               <Input
                 id="edit-title"
-                value={newBook.title}
-                onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
+                value={bookFormData.title}
+                onChange={(e) => setBookFormData({ ...bookFormData, title: e.target.value })}
                 className="bg-gray-800 border-gray-700"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="edit-author">Author</Label>
-                <Input
-                  id="edit-author"
-                  value={newBook.author}
-                  onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
-                  className="bg-gray-800 border-gray-700"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="edit-publisher">Publisher</Label>
-                <Input
-                  id="edit-publisher"
-                  value={newBook.publisher}
-                  onChange={(e) => setNewBook({ ...newBook, publisher: e.target.value })}
-                  className="bg-gray-800 border-gray-700"
-                />
-              </div>
+            <div className="grid grid-cols-1 gap-2">
+              <Label htmlFor="edit-author">Author</Label>
+              <Input
+                id="edit-author"
+                value={bookFormData.author}
+                onChange={(e) => setBookFormData({ ...bookFormData, author: e.target.value })}
+                className="bg-gray-800 border-gray-700"
+              />
             </div>
-            <div className="grid gap-2">
+            <div className="grid grid-cols-1 gap-2">
+              <Label htmlFor="edit-publisher">Publisher</Label>
+              <Input
+                id="edit-publisher"
+                value={bookFormData.publisher}
+                onChange={(e) => setBookFormData({ ...bookFormData, publisher: e.target.value })}
+                className="bg-gray-800 border-gray-700"
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-2">
               <Label htmlFor="edit-isbn">ISBN</Label>
               <Input
                 id="edit-isbn"
-                value={newBook.isbn}
-                onChange={(e) => setNewBook({ ...newBook, isbn: e.target.value })}
+                value={bookFormData.isbn}
+                onChange={(e) => setBookFormData({ ...bookFormData, isbn: e.target.value })}
                 className="bg-gray-800 border-gray-700"
               />
             </div>
-            <div className="flex items-center gap-4">
-              <Label htmlFor="edit-available" className="text-gray-300">Availability</Label>
+            {/* Admin Unavailable switch for editing books */}
+             <div className="flex items-center space-x-2">
               <Switch
-                id="edit-available"
-                checked={newBook.available}
-                onCheckedChange={(checked) => setNewBook({ ...newBook, available: checked })}
+                id="admin-unavailable-edit"
+                // Switch should be ON if NOT adminUnavailable, and OFF if adminUnavailable
+                checked={!bookFormData.adminUnavailable}
+                // Update adminUnavailable based on switch position
+                onCheckedChange={(checked) => setBookFormData({ ...bookFormData, adminUnavailable: !checked })}
+                // Disable if the book is currently borrowed
+                disabled={selectedBook ? isBookBorrowed(selectedBook.id) : false} 
               />
-              <span className="text-sm text-gray-400">
-                {newBook.available ? "Available" : "Not Available"}
-              </span>
+              <Label htmlFor="admin-unavailable-edit">Available</Label>
             </div>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsEditDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button 
-              className="bg-blue-500 hover:bg-blue-600"
-              onClick={handleSaveBook}
-            >
-              Update Book
-            </Button>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
+            <Button className="bg-library-accent hover:bg-orange-600" onClick={handleSaveBook}>Save Changes</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
-      {/* Delete Book Confirmation Dialog */}
+
+      {/* Delete Book Dialog */} 
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="bg-library-panel text-white border-gray-700">
           <DialogHeader>
-            <DialogTitle>Delete Book</DialogTitle>
+            <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription className="text-gray-400">
-              Are you sure you want to delete "{selectedBook?.title}"? This action cannot be undone.
+              Are you sure you want to delete the book "{selectedBook?.title}"? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button 
-              variant="destructive"
-              onClick={handleDeleteConfirm}
-            >
-              Delete
-            </Button>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
+            <Button className="bg-red-600 hover:bg-red-700" onClick={handleDeleteConfirm}>Delete</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

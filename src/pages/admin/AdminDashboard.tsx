@@ -1,26 +1,40 @@
-
 import React from "react";
 import Sidebar from "@/components/Sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book as BookIcon, Users, Clock } from "lucide-react";
-import { books, borrowedBooks, users } from "@/data/mockData";
+// import { books, borrowedBooks, users } from "@/data/mockData";
 import { useAuth } from "@/contexts/AuthContext";
 import Footer from "@/components/Footer";
 import FloatingBooks from "@/components/FloatingBooks";
+import { useBooks } from "@/contexts/BookContext";
 
 const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
+  const { books, borrowedBooks } = useBooks();
   const adminName = user?.name || "Administrator";
   
-  const studentsCount = users.filter(u => u.role === "student").length;
+  // Assuming users data might still be needed for total student count if not in context
+  // const studentsCount = users.filter(u => u.role === "student").length;
+  
   const availableBooks = books.filter(b => b.available).length;
   const borrowedBooksCount = borrowedBooks.filter(b => b.status === "active").length;
+
+  // Calculate borrowed books specifically for student1 and student2
+  const student1BorrowedCount = borrowedBooks.filter(
+    (b) => b.studentEmail === "student1@example.com" && b.status === "active"
+  ).length;
+  const student2BorrowedCount = borrowedBooks.filter(
+    (b) => b.studentEmail === "student2@example.com" && b.status === "active"
+  ).length;
   
   // Get the most recent borrowed books
   const recentBorrowings = [...borrowedBooks]
     .sort((a, b) => {
-      const dateA = new Date(a.borrowedDate.split('/').reverse().join('-'));
-      const dateB = new Date(b.borrowedDate.split('/').reverse().join('-'));
+      // Assuming borrowedDate is in DD/MM/YYYY format
+      const [dayA, monthA, yearA] = a.borrowedDate.split('/');
+      const [dayB, monthB, yearB] = b.borrowedDate.split('/');
+      const dateA = new Date(`${yearA}-${monthA}-${dayA}`);
+      const dateB = new Date(`${yearB}-${monthB}-${dayB}`);
       return dateB.getTime() - dateA.getTime();
     })
     .slice(0, 5);
@@ -30,9 +44,9 @@ const AdminDashboard: React.FC = () => {
       <FloatingBooks />
       <Sidebar userType="admin" />
       
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col ml-64">
         <main className="flex-1 p-6">
-          <div className="max-w-6xl mx-auto">
+          <div className="">
             <header className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-white">
@@ -70,7 +84,8 @@ const AdminDashboard: React.FC = () => {
                 </CardContent>
               </Card>
               
-              <Card className="bg-library-panel border-gray-700 text-white">
+              {/* Assuming student count might come from a different context or remains static for now */}
+              {/* <Card className="bg-library-panel border-gray-700 text-white">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-lg font-medium">Students</CardTitle>
                   <Users className="h-5 w-5 text-library-accent" />
@@ -82,18 +97,26 @@ const AdminDashboard: React.FC = () => {
                     <p className="text-blue-400">{studentsCount}</p>
                   </div>
                 </CardContent>
-              </Card>
-              
+              </Card> */}
+
               <Card className="bg-library-panel border-gray-700 text-white">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-lg font-medium">Borrowed Books</CardTitle>
                   <Clock className="h-5 w-5 text-library-accent" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">{borrowedBooksCount}</div>
-                  <div className="flex justify-between items-center mt-2">
-                    <p className="text-sm text-gray-400">Active</p>
-                    <p className="text-orange-400">{borrowedBooksCount}</p>
+                  <div className="text-3xl font-bold mb-2">{borrowedBooksCount}</div>
+                  <div className="flex justify-between items-center text-sm text-gray-400">
+                    <span>Active</span>
+                    <span className="text-orange-400">{borrowedBooksCount}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm text-gray-400 mt-1">
+                    <span>Student 1 Borrowed</span>
+                    <span className="text-orange-400">{student1BorrowedCount}</span>
+                  </div>
+                   <div className="flex justify-between items-center text-sm text-gray-400 mt-1">
+                    <span>Student 2 Borrowed</span>
+                    <span className="text-orange-400">{student2BorrowedCount}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -101,7 +124,7 @@ const AdminDashboard: React.FC = () => {
             
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">Recent Activity</h2>
-              <div className="bg-library-panel rounded-xl overflow-hidden">
+              <div className="bg-library-panel rounded-xl overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-700">

@@ -1,4 +1,3 @@
-
 import { User, Book, BorrowedBook } from "@/types";
 
 export const users: User[] = [
@@ -54,7 +53,7 @@ export const books: Book[] = [
     publisher: "Free Press",
     isbn: "978-1-4391-7295-7",
     coverImage: "/placeholder.svg",
-    available: false,
+    available: true,
   },
   {
     id: "4",
@@ -81,7 +80,7 @@ export const books: Book[] = [
     publisher: "Viking",
     isbn: "978-0-670-81302-5",
     coverImage: "/placeholder.svg",
-    available: false,
+    available: true,
   },
   {
     id: "7",
@@ -108,7 +107,7 @@ export const books: Book[] = [
     publisher: "Doubleday",
     isbn: "978-0-385-08695-0",
     coverImage: "/placeholder.svg",
-    available: false,
+    available: true,
   },
   {
     id: "10",
@@ -140,34 +139,5 @@ export const books: Book[] = [
 ];
 
 export const borrowedBooks: BorrowedBook[] = [
-  {
-    id: "1",
-    studentName: "John Smith",
-    studentEmail: "student1@example.com",
-    bookTitle: "Last Words",
-    bookId: "3",
-    borrowedDate: "01/05/2025",
-    dueDate: "15/05/2025",
-    status: "active",
-  },
-  {
-    id: "2",
-    studentName: "Emily Davis",
-    studentEmail: "student2@example.com",
-    bookTitle: "It",
-    bookId: "6",
-    borrowedDate: "28/04/2025",
-    dueDate: "12/05/2025",
-    status: "active",
-  },
-  {
-    id: "3",
-    studentName: "Emily Davis",
-    studentEmail: "student2@example.com",
-    bookTitle: "Carrie",
-    bookId: "9",
-    borrowedDate: "15/04/2025",
-    dueDate: "29/04/2025",
-    status: "active",
-  },
+  // Remove initial borrowed books to start with all available when local storage is clear
 ];

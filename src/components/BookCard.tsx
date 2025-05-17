@@ -1,8 +1,17 @@
-
 import React from "react";
 import { Book } from "@/types";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useBooks } from "@/contexts/BookContext";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface BookCardProps {
   book: Book;
@@ -11,12 +20,30 @@ interface BookCardProps {
 
 const BookCard: React.FC<BookCardProps> = ({ book, isStudent = false }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { borrowBook } = useBooks();
+  const [showBorrowDialog, setShowBorrowDialog] = React.useState(false);
 
   const handleViewDetails = () => {
     if (isStudent) {
       navigate(`/student/books/${book.id}`);
     } else {
       navigate(`/admin/books/${book.id}`);
+    }
+  };
+
+  const handleBorrow = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    setShowBorrowDialog(true);
+  };
+
+  const confirmBorrow = () => {
+    if (user) {
+      borrowBook(book.id, user.email, user.name);
+      setShowBorrowDialog(false);
     }
   };
 
@@ -44,14 +71,52 @@ const BookCard: React.FC<BookCardProps> = ({ book, isStudent = false }) => {
               {book.available ? "Available" : "Borrowed"}
             </span>
           </div>
-          <Button
-            className="mt-3 bg-library-accent hover:bg-orange-600 text-white"
-            onClick={handleViewDetails}
-          >
-            View Details
-          </Button>
+          <div className="flex gap-2 mt-3">
+            <Button
+              className="flex-1 bg-library-accent hover:bg-orange-600 text-white"
+              onClick={handleViewDetails}
+            >
+              View Details
+            </Button>
+            {isStudent && book.available && (
+              <Button
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                onClick={handleBorrow}
+              >
+                Borrow
+              </Button>
+            )}
+          </div>
         </div>
       </div>
+
+      <Dialog 
+        open={showBorrowDialog}
+        onOpenChange={setShowBorrowDialog}
+      >
+        <DialogContent className="bg-library-panel text-white border-gray-700">
+          <DialogHeader>
+            <DialogTitle>Borrow Book</DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Are you sure you want to borrow "{book.title}"? You will have 14 days to return it.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowBorrowDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              className="bg-library-accent hover:bg-orange-600"
+              onClick={confirmBorrow}
+            >
+              Confirm Borrow
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
