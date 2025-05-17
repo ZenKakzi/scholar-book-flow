@@ -5,7 +5,14 @@ import { books } from "@/data/mockData";
 import BookCard from "@/components/BookCard";
 import SearchBox from "@/components/SearchBox";
 import Footer from "@/components/Footer";
-import { Pagination } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevPage,
+  PaginationNextPage,
+  PaginationPage
+} from "@/components/ui/pagination";
 import FloatingBooks from "@/components/FloatingBooks";
 
 const StudentBooks: React.FC = () => {
@@ -55,23 +62,30 @@ const StudentBooks: React.FC = () => {
             {totalPages > 1 && (
               <div className="flex justify-center mt-8">
                 <Pagination>
-                  <Pagination.PrevPage
-                    onClick={() => setCurrentPage(curr => Math.max(curr - 1, 1))}
-                    disabled={currentPage === 1}
-                  />
-                  {Array.from({ length: totalPages }).map((_, index) => (
-                    <Pagination.Page
-                      key={index}
-                      onClick={() => setCurrentPage(index + 1)}
-                      isActive={currentPage === index + 1}
-                    >
-                      {index + 1}
-                    </Pagination.Page>
-                  ))}
-                  <Pagination.NextPage
-                    onClick={() => setCurrentPage(curr => Math.min(curr + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                  />
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevPage
+                        onClick={() => setCurrentPage(curr => Math.max(curr - 1, 1))}
+                        disabled={currentPage === 1}
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: totalPages }).map((_, index) => (
+                      <PaginationItem key={index}>
+                        <PaginationPage
+                          onClick={() => setCurrentPage(index + 1)}
+                          isActive={currentPage === index + 1}
+                        >
+                          {index + 1}
+                        </PaginationPage>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNextPage
+                        onClick={() => setCurrentPage(curr => Math.min(curr + 1, totalPages))}
+                        disabled={currentPage === totalPages}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
                 </Pagination>
               </div>
             )}

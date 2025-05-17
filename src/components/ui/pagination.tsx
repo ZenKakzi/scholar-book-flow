@@ -53,7 +53,6 @@ const PaginationLink = ({
   <Button
     aria-current={isActive ? "page" : undefined}
     variant={isActive ? "default" : "outline"}
-    size="icon"
     className={cn(className)}
     {...props}
   >
@@ -65,32 +64,32 @@ PaginationLink.displayName = "PaginationLink";
 const PaginationPrevious = ({
   className,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink
+}: React.ComponentProps<typeof Button>) => (
+  <Button
     aria-label="Go to previous page"
-    size="default"
+    variant="outline"
     className={cn("gap-1 pl-2.5", className)}
     {...props}
   >
     <ChevronLeft className="h-4 w-4" />
     <span>Previous</span>
-  </PaginationLink>
+  </Button>
 );
 PaginationPrevious.displayName = "PaginationPrevious";
 
 const PaginationNext = ({
   className,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink
+}: React.ComponentProps<typeof Button>) => (
+  <Button
     aria-label="Go to next page"
-    size="default"
+    variant="outline"
     className={cn("gap-1 pr-2.5", className)}
     {...props}
   >
     <span>Next</span>
     <ChevronRight className="h-4 w-4" />
-  </PaginationLink>
+  </Button>
 );
 PaginationNext.displayName = "PaginationNext";
 
@@ -119,12 +118,15 @@ const PaginationPage = ({
   isActive?: boolean;
   onClick?: () => void;
 }) => (
-  <PaginationItem>
-    <PaginationLink isActive={isActive} onClick={onClick}>
-      {children}
-    </PaginationLink>
-  </PaginationItem>
+  <Button
+    variant={isActive ? "default" : "outline"}
+    onClick={onClick}
+    className={isActive ? "bg-primary" : ""}
+  >
+    {children}
+  </Button>
 );
+PaginationPage.displayName = "PaginationPage";
 
 // Custom previous page component
 const PaginationPrevPage = ({
@@ -134,17 +136,16 @@ const PaginationPrevPage = ({
   onClick: () => void;
   disabled?: boolean;
 }) => (
-  <PaginationItem>
-    <Button
-      variant="outline"
-      onClick={onClick}
-      disabled={disabled}
-      size="icon"
-    >
-      <ChevronLeft className="h-4 w-4" />
-    </Button>
-  </PaginationItem>
+  <Button
+    variant="outline"
+    onClick={onClick}
+    disabled={disabled}
+    size="icon"
+  >
+    <ChevronLeft className="h-4 w-4" />
+  </Button>
 );
+PaginationPrevPage.displayName = "PaginationPrevPage";
 
 // Custom next page component
 const PaginationNextPage = ({
@@ -154,17 +155,16 @@ const PaginationNextPage = ({
   onClick: () => void;
   disabled?: boolean;
 }) => (
-  <PaginationItem>
-    <Button
-      variant="outline"
-      onClick={onClick}
-      disabled={disabled}
-      size="icon"
-    >
-      <ChevronRight className="h-4 w-4" />
-    </Button>
-  </PaginationItem>
+  <Button
+    variant="outline"
+    onClick={onClick}
+    disabled={disabled}
+    size="icon"
+  >
+    <ChevronRight className="h-4 w-4" />
+  </Button>
 );
+PaginationNextPage.displayName = "PaginationNextPage";
 
 export {
   Pagination,

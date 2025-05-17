@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Book, Dashboard, Search, LogOut } from "lucide-react";
+import { Book, LayoutDashboard, Search, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +20,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userType }) => {
 
   const navItems = [
     {
-      icon: Dashboard,
+      icon: LayoutDashboard,
       label: "Dashboard",
       path: `/${userType}/dashboard`,
     },
