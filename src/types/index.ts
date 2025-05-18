@@ -15,6 +15,7 @@ export interface Book {
   publisher: string;
   isbn: string;
   coverImage: string;
+  
   available: boolean;
 }
 

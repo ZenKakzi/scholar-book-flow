@@ -13,6 +13,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+// Import the image
+import harryPotterImage from "/images/harry-potter.png";
+
 interface BookCardProps {
   book: Book;
   isStudent?: boolean;
@@ -23,6 +26,14 @@ const BookCard: React.FC<BookCardProps> = ({ book, isStudent = false }) => {
   const { user } = useAuth();
   const { borrowBook } = useBooks();
   const [showBorrowDialog, setShowBorrowDialog] = React.useState(false);
+
+  // Function to get the correct image
+  const getBookImage = (bookId: string) => {
+    if (bookId === "1") {
+      return harryPotterImage;
+    }
+    return book.coverImage;
+  };
 
   const handleViewDetails = () => {
     if (isStudent) {

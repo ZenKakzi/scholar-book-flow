@@ -29,7 +29,7 @@ import { BorrowedBook } from "@/types";
 import { useBooks } from "@/contexts/BookContext";
 
 const AdminBorrowed: React.FC = () => {
-  const { borrowedBooks } = useBooks();
+  const { borrowedBooks, addOrUpdateBorrowedBook, deleteBorrowedBook } = useBooks();
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -99,6 +99,22 @@ const AdminBorrowed: React.FC = () => {
   // Handle form submission
   const handleSaveBorrowing = () => {
     // For a real app, this would be an API call
+    
+    // Create a complete BorrowedBook object
+    const borrowingToSave: BorrowedBook = {
+      // If editing, use the existing ID; otherwise, generate a new one
+      id: isEditDialogOpen && selectedBorrowing ? selectedBorrowing.id : Date.now().toString(), 
+      studentName: newBorrowing.studentName || "",
+      studentEmail: newBorrowing.studentEmail || "",
+      bookTitle: newBorrowing.bookTitle || "",
+      bookId: newBorrowing.bookId || "", // Assuming bookId is added to the form
+      borrowedDate: newBorrowing.borrowedDate || formatDate(new Date()),
+      dueDate: newBorrowing.dueDate || formatDate(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)), // Default to 2 weeks later
+      status: newBorrowing.status || "active",
+    };
+
+    addOrUpdateBorrowedBook(borrowingToSave); // Use the new context function
+
     toast.success(`Borrowing record ${isEditDialogOpen ? 'updated' : 'added'} successfully!`);
     setIsAddDialogOpen(false);
     setIsEditDialogOpen(false);
@@ -106,6 +122,9 @@ const AdminBorrowed: React.FC = () => {
   
   const handleDeleteConfirm = () => {
     // For a real app, this would be an API call
+    if (selectedBorrowing) {
+      deleteBorrowedBook(selectedBorrowing.id); // Use the new context function
+    }
     toast.success("Borrowing record deleted successfully!");
     setIsDeleteDialogOpen(false);
   };

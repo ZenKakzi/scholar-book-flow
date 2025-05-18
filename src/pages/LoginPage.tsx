@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -31,7 +30,12 @@ const LoginPage: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-library-background">
       <FloatingBooks />
       
-      <div className="flex flex-col items-center justify-center flex-1 p-4">
+      <div className="flex flex-1 items-center justify-center p-4">
+        <div className="hidden md:flex flex-col items-center mx-8">
+          <img src="/images/girl-reading.png" alt="Girl reading" className="h-64 w-auto" />
+          <h2 className="text-xl font-bold text-white mt-2">Admin</h2>
+        </div>
+
         <div className="w-full max-w-md animate-fade-in">
           <div className="flex justify-center mb-6">
             <Book className="h-12 w-12 text-library-accent" />
@@ -108,6 +112,11 @@ const LoginPage: React.FC = () => {
               </p>
             </CardFooter>
           </Card>
+        </div>
+
+        <div className="hidden md:flex flex-col items-center mx-8">
+          <img src="/images/boy-student.png" alt="Boy student" className="h-64 w-auto" />
+          <h2 className="text-xl font-bold text-white mt-2">Student</h2>
         </div>
       </div>
       

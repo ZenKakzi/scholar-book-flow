@@ -34,7 +34,7 @@ export const books: Book[] = [
     author: "J.K. Rowling",
     publisher: "Bloomsbury",
     isbn: "978-0-7475-3269-9",
-    coverImage: "/placeholder.svg",
+    coverImage: "/public/images/harry-potter.png",
     available: true,
   },
   {
@@ -43,7 +43,7 @@ export const books: Book[] = [
     author: "Charles Darwin",
     publisher: "John Murray",
     isbn: "978-0-6848-3728-0",
-    coverImage: "/placeholder.svg",
+    coverImage: "/public/images/species.png",
     available: true,
   },
   {
@@ -52,7 +52,7 @@ export const books: Book[] = [
     author: "George Carlin",
     publisher: "Free Press",
     isbn: "978-1-4391-7295-7",
-    coverImage: "/placeholder.svg",
+    coverImage: "/public/images/last-words.png",
     available: true,
   },
   {
@@ -61,7 +61,7 @@ export const books: Book[] = [
     author: "Eowyn Ivey",
     publisher: "Little, Brown and Company",
     isbn: "978-0-316-24285-1",
-    coverImage: "/placeholder.svg",
+    coverImage: "/images/The-Bright-Edge-of-the-World.png",
     available: true,
   },
   {
@@ -70,7 +70,7 @@ export const books: Book[] = [
     author: "Stephen King",
     publisher: "Doubleday",
     isbn: "978-0-385-12167-5",
-    coverImage: "/placeholder.svg",
+    coverImage: "/public/images/the-shining.png",
     available: true,
   },
   {
@@ -79,7 +79,7 @@ export const books: Book[] = [
     author: "Stephen King",
     publisher: "Viking",
     isbn: "978-0-670-81302-5",
-    coverImage: "/placeholder.svg",
+    coverImage: "/images/it.png",
     available: true,
   },
   {
@@ -88,7 +88,7 @@ export const books: Book[] = [
     author: "Stephen King",
     publisher: "Doubleday",
     isbn: "978-0-385-12168-2",
-    coverImage: "/placeholder.svg",
+    coverImage: "/images/the-stand.png",
     available: true,
   },
   {
@@ -97,7 +97,7 @@ export const books: Book[] = [
     author: "Stephen King",
     publisher: "Doubleday",
     isbn: "978-0-385-12874-2",
-    coverImage: "/placeholder.svg",
+    coverImage: "/images/pet-sematary.png",
     available: true,
   },
   {
@@ -106,7 +106,7 @@ export const books: Book[] = [
     author: "Stephen King",
     publisher: "Doubleday",
     isbn: "978-0-385-08695-0",
-    coverImage: "/placeholder.svg",
+    coverImage: "/images/carrie.png",
     available: true,
   },
   {
@@ -115,7 +115,7 @@ export const books: Book[] = [
     author: "Stephen King",
     publisher: "Viking",
     isbn: "978-0-670-81364-3",
-    coverImage: "/placeholder.svg",
+    coverImage: "/images/misery.png",
     available: true,
   },
   {
@@ -124,7 +124,7 @@ export const books: Book[] = [
     author: "Stephen King",
     publisher: "Signet Books",
     isbn: "978-0-451-19336-4",
-    coverImage: "/placeholder.svg",
+    coverImage: "/images/the-green-mile.png",
     available: true,
   },
   {
@@ -133,7 +133,7 @@ export const books: Book[] = [
     author: "Stephen King",
     publisher: "Scribner",
     isbn: "978-1-4516-2728-2",
-    coverImage: "/placeholder.svg",
+    coverImage: "/images/112263.png",
     available: true,
   },
 ];

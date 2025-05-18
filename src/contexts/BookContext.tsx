@@ -11,6 +11,8 @@ interface BookContextType {
   deleteBook: (bookId: string) => void;
   addBook: (book: Omit<Book, 'id'> & { adminUnavailable?: boolean }) => void;
   updateBook: (book: Book & { adminUnavailable?: boolean }) => void;
+  addOrUpdateBorrowedBook: (borrowedBook: BorrowedBook) => void;
+  deleteBorrowedBook: (borrowedBookId: string) => void;
 }
 
 const BookContext = createContext<BookContextType | undefined>(undefined);
@@ -153,6 +155,28 @@ export function BookProvider({ children }: { children: React.ReactNode }) {
      toast.success("Book updated successfully!");
   };
 
+  // New function to add or update a borrowed book record from admin
+  const addOrUpdateBorrowedBook = (borrowedBook: BorrowedBook) => {
+    setBorrowedBooks(prev => {
+      const existingIndex = prev.findIndex(b => b.id === borrowedBook.id);
+      if (existingIndex > -1) {
+        // Update existing record
+        const newState = [...prev];
+        newState[existingIndex] = borrowedBook;
+        return newState;
+      } else {
+        // Add new record
+        return [...prev, borrowedBook];
+      }
+    });
+  };
+
+  // New function to delete a borrowed book record
+  const deleteBorrowedBook = (borrowedBookId: string) => {
+    setBorrowedBooks(prev => prev.filter(borrowed => borrowed.id !== borrowedBookId));
+    toast.success("Borrowed book record deleted successfully!");
+  };
+
   // Provide books with derived availability
   const booksWithAvailability = React.useMemo(() => 
     getBooksWithAvailability(books, borrowedBooks),
@@ -160,7 +184,17 @@ export function BookProvider({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <BookContext.Provider value={{ books: booksWithAvailability, borrowedBooks, returnBook, borrowBook, deleteBook, addBook, updateBook }}>
+    <BookContext.Provider value={{
+      books: booksWithAvailability,
+      borrowedBooks,
+      returnBook,
+      borrowBook,
+      deleteBook,
+      addBook,
+      updateBook,
+      addOrUpdateBorrowedBook,
+      deleteBorrowedBook,
+    }}>
       {children}
     </BookContext.Provider>
   );

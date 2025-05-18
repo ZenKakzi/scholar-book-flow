@@ -8,6 +8,14 @@ import BookCard from "@/components/BookCard";
 import SearchBox from "@/components/SearchBox";
 import FloatingBooks from "@/components/FloatingBooks";
 import Footer from "@/components/Footer";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const StudentDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -97,25 +105,39 @@ const StudentDashboard: React.FC = () => {
             <div>
               <h2 className="text-2xl font-bold text-white mb-4">My Borrowed Books</h2>
               {myBorrowedBooks.length > 0 ? (
+                <div className="bg-library-panel rounded-xl overflow-hidden mb-6">
                 <div className="overflow-x-auto">
-                  <table className="w-full bg-library-panel rounded-xl overflow-hidden">
-                    <thead>
-                      <tr className="border-b border-gray-700">
-                        <th className="text-left p-4 text-gray-400">Book Title</th>
-                        <th className="text-left p-4 text-gray-400">Borrowed Date</th>
-                        <th className="text-left p-4 text-gray-400">Due Date</th>
-                      </tr>
-                    </thead>
-                    <tbody>
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-gray-700">
+                          <TableHead className="text-gray-300">Book Title</TableHead>
+                          <TableHead className="text-gray-300">Borrowed Date</TableHead>
+                          <TableHead className="text-gray-300">Due Date</TableHead>
+                          <TableHead className="text-gray-300">Status</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
                       {myBorrowedBooks.map((borrowed) => (
-                        <tr key={borrowed.id} className="border-b border-gray-700">
-                          <td className="p-4 text-white">{borrowed.bookTitle}</td>
-                          <td className="p-4 text-gray-300">{borrowed.borrowedDate}</td>
-                          <td className="p-4 text-gray-300">{borrowed.dueDate}</td>
-                        </tr>
+                          <TableRow key={borrowed.id} className="border-gray-700">
+                            <TableCell className="font-medium text-white">{borrowed.bookTitle}</TableCell>
+                            <TableCell className="text-gray-300">{borrowed.borrowedDate}</TableCell>
+                            <TableCell className="text-gray-300">{borrowed.dueDate}</TableCell>
+                            <TableCell>
+                              <span
+                                className={`px-2 py-1 text-xs rounded-full ${
+                                  borrowed.status === "active"
+                                    ? "bg-green-800 text-green-200"
+                                    : "bg-blue-800 text-blue-200"
+                                }`}
+                              >
+                                {borrowed.status === "active" ? "Active" : "Returned"}
+                              </span>
+                            </TableCell>
+                          </TableRow>
                       ))}
-                    </tbody>
-                  </table>
+                      </TableBody>
+                    </Table>
+                  </div>
                 </div>
               ) : (
                 <div className="bg-library-panel p-6 rounded-xl text-center">
